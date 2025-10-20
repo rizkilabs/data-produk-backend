@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use((err, req, res, next) => {
-  console.error("🔥 ERROR:", err);
+  console.error("ERROR:", err);
   res.status(err.status || 500).json({
     error: err.message || "Terjadi kesalahan di server",
   });
