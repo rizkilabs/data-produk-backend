@@ -28,7 +28,30 @@ const getProdukById = async (req, res) => {
   }
 };
 
+const createProduk = async (req, res) => {
+  try {
+    const { kode_produk } = req.body;
+
+    const existing = await prisma.produk.findUnique({
+      where: { kode_produk },
+    });
+    if (existing) {
+      return res.status(400).json({ error: "Kode produk sudah digunakan." });
+    }
+
+    const newProduk = await prisma.$transaction(async (tx) => {
+      return await tx.produk.create({ data: req.body });
+    });
+
+    res.status(201).json(newProduk);
+  } catch (err) {
+    console.error("createProduk Error:", err);
+    res.status(500).json({ error: "Gagal membuat produk baru." });
+  }
+};
+
 module.exports = {
   getAllProduk,
   getProdukById,
+  createProduk,
 };
