@@ -50,8 +50,53 @@ const createProduk = async (req, res) => {
   }
 };
 
+const updateProduk = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const produk = await prisma.produk.findUnique({
+      where: { id: Number(id) },
+    });
+    if (!produk) {
+      return res.status(404).json({ error: "Produk tidak ditemukan." });
+    }
+
+    const updated = await prisma.produk.update({
+      where: { id: Number(id) },
+      data: req.body,
+    });
+
+    res.json(updated);
+  } catch (err) {
+    console.error("updateProduk Error:", err);
+    res.status(500).json({ error: "Gagal memperbarui produk." });
+  }
+};
+
+const deleteProduk = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const produk = await prisma.produk.findUnique({
+      where: { id: Number(id) },
+    });
+    if (!produk) {
+      return res.status(404).json({ error: "Produk tidak ditemukan." });
+    }
+
+    await prisma.produk.delete({ where: { id: Number(id) } });
+
+    res.json({ message: "Produk berhasil dihapus." });
+  } catch (err) {
+    console.error("deleteProduk Error:", err);
+    res.status(500).json({ error: "Gagal menghapus produk." });
+  }
+};
+
 module.exports = {
   getAllProduk,
   getProdukById,
+  createProduk,
+  updateProduk,
   createProduk,
 };
